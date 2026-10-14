@@ -34,13 +34,16 @@ jobs:
           cd extension
           npx @vscode/vsce package --no-git-tag-version -o code-inspector-${{ github.ref_name }}.vsix
 
-      - name: Publish to VS Code Marketplace (when VSCE_PAT is set)
-        if: ${{ secrets.VSCE_PAT != '' }}
+      - name: Publish to VS Code Marketplace
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
         run: |
+          if [ -z "$VSCE_PAT" ]; then
+            echo "VSCE_PAT secret is not configured. Skipping VS Code Marketplace publishing."
+            exit 0
+          fi
           cd extension
-          npx @vscode/vsce publish -p "${{ secrets.VSCE_PAT }}"
+          npx @vscode/vsce publish -p "$VSCE_PAT"
 
       - name: Upload VSIX to GitHub Release
         uses: softprops/action-gh-release@v2

@@ -9,8 +9,6 @@
 
 **Code Inspector** brings intelligent, streamed inline code review and one-click refactoring directly into Visual Studio Code. Powered by Claude 3.5 Sonnet and backed by a low-latency Node.js caching tier with Redis, Code Inspector detects critical bug risks, pinpoints complexity hot spots, suggests clean naming improvements, and applies refactors with native `WorkspaceEdit` diffs.
 
-🌐 **Live Showcase & Interactive Demo**: [crnjihia.github.io/code-inspector/](https://crnjihia.github.io/code-inspector/)
-
 ---
 
 ## 📸 Overview & Live Preview

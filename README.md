@@ -5,6 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Node.js 20+](https://img.shields.io/badge/Node.js-20+-339933.svg?style=for-the-badge&logo=node.js)](https://nodejs.org)
 [![Claude Powered](https://img.shields.io/badge/Anthropic-Claude--3.5--Sonnet-d97706.svg?style=for-the-badge)](https://anthropic.com)
+[![Live Showcase](https://img.shields.io/badge/Live_Showcase-GitHub_Pages-00f0ff?style=for-the-badge&logo=github)](https://crnjihia.github.io/code-inspector/)
 
 **Code Inspector** brings intelligent, streamed inline code review and one-click refactoring directly into Visual Studio Code. Powered by Claude 3.5 Sonnet and backed by a low-latency Node.js caching tier with Redis, Code Inspector detects critical bug risks, pinpoints complexity hot spots, suggests clean naming improvements, and applies refactors with native `WorkspaceEdit` diffs.
 

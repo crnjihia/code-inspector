@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Inspector — Intelligent Inline AI Code Review & One-Click Refactoring for VS Code</title>
+  
+  <!-- SEO & Social Meta Tags -->
+  <meta name="description" content="Visual Studio Code extension for real-time streamed AI code review powered by Claude 3.5 Sonnet and Redis 7. Automatic bug risk triage, cognitive complexity scoring, naming refinements, and one-click WorkspaceEdit refactoring.">
+  <meta name="keywords" content="VS Code Extension, Code Review, AI Code Review, Claude 3.5 Sonnet, Anthropic, TypeScript, Redis Cache, One-Click Refactor, Static Analysis, Developer Tools">
+  <meta name="author" content="crnjihia">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://crnjihia.github.io/code-inspector/">
+  <meta property="og:title" content="Code Inspector — Intelligent Inline AI Code Review & One-Click Refactoring">
+  <meta property="og:description" content="Streamed inline code review, bug triage, cognitive complexity metrics, and one-click refactoring directly in VS Code. Sub-50ms repeat reviews via Redis SHA-256 caching.">
+  <meta property="og:image" content="assets/screenshot.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Code Inspector — Intelligent Inline AI Code Review for VS Code">
+  <meta name="twitter:description" content="Transform your code review workflow with streamed Claude 3.5 Sonnet reviews and sub-50ms Redis-cached audits.">
+  <meta name="twitter:image" content="assets/screenshot.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Sticky Top Navigation -->
+  <header class="navbar" id="topNavbar">
+    <div class="container nav-container">
+      <a href="#hero" class="nav-brand" id="brandLink">
+        <img src="favicon.svg" alt="Code Inspector Logo" class="brand-icon" id="brandIcon">
+        <span>Code Inspector</span>
+        <span class="brand-badge">v0.1.0</span>
+      </a>
+
+      <ul class="nav-links" id="navLinksList">
+        <li><a href="#simulator" class="nav-link">Interactive Studio</a></li>
+        <li><a href="#architecture" class="nav-link">Architecture</a></li>
+        <li><a href="#showcase" class="nav-link">Extension Preview</a></li>
+        <li><a href="#commands" class="nav-link">Commands</a></li>
+        <li><a href="#quickstart" class="nav-link">Quickstart</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="https://github.com/crnjihia/code-inspector" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" id="navGithubBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          GitHub
+        </a>
+        <a href="https://marketplace.visualstudio.com/items?itemName=crnjihia.code-inspector" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm btn-glow" id="navInstallBtn">
+          ⚡ Install in VS Code
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+      <div class="container">
+        <div class="eyebrow-badge" id="heroBadge">
+          <span>⚡</span>
+          <span>VS Code Extension • Powered by Claude 3.5 Sonnet &amp; Redis 7</span>
+        </div>
+
+        <h1 class="hero-title" id="mainHeading">
+          Intelligent Inline AI Code Review &amp; <span class="gradient-text">One-Click Refactoring</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Code Inspector transforms the developer review experience in Visual Studio Code. Highlight any function, press <kbd class="shortcut-pill">Ctrl+Shift+K</kbd>, and watch Claude 3.5 Sonnet stream actionable bug risk assessments, cognitive complexity scoring, naming refinements, and instant native diff refactoring.
+        </p>
+
+        <div class="hero-cta">
+          <a href="#simulator" class="btn btn-primary btn-glow" id="heroSimulatorBtn">
+            🚀 Launch Live Simulator
+          </a>
+          <a href="#architecture" class="btn btn-secondary" id="heroArchBtn">
+            Explore Architecture
+          </a>
+          <a href="https://marketplace.visualstudio.com/items?itemName=crnjihia.code-inspector" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" id="heroMarketplaceBtn">
+            VS Code Marketplace
+          </a>
+        </div>
+
+        <!-- HUD Metrics Ribbon -->
+        <div class="metrics-grid" id="hudMetrics">
+          <div class="metric-card" id="metricLatency">
+            <div class="metric-header">
+              <span class="metric-icon">⚡</span>
+              <span class="metric-tag">LATENCY</span>
+            </div>
+            <div class="metric-value cyan">&lt; 50ms</div>
+            <p class="metric-label">Sub-50ms repeat reviews accelerated by SHA-256 Redis in-memory cache</p>
+          </div>
+
+          <div class="metric-card" id="metricSeverity">
+            <div class="metric-header">
+              <span class="metric-icon">🚨</span>
+              <span class="metric-tag">TRIAGE</span>
+            </div>
+            <div class="metric-value red">3 Tiers</div>
+            <p class="metric-label">HIGH, MEDIUM, and LOW severity classifications mapped to exact line numbers</p>
+          </div>
+
+          <div class="metric-card" id="metricAudit">
+            <div class="metric-header">
+              <span class="metric-icon">📊</span>
+              <span class="metric-tag">DIMENSIONS</span>
+            </div>
+            <div class="metric-value purple">4 Pillars</div>
+            <p class="metric-label">Bug risks, cognitive complexity, naming idiomatics, and declarative refactoring</p>
+          </div>
+
+          <div class="metric-card" id="metricEdits">
+            <div class="metric-header">
+              <span class="metric-icon">🛠️</span>
+              <span class="metric-tag">EXECUTION</span>
+            </div>
+            <div class="metric-value green">1-Click</div>
+            <p class="metric-label">Native VS Code <code>WorkspaceEdit</code> diffs applied directly with full undo/redo stack</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Live Studio & Simulator Section -->
+    <section class="simulator-section" id="simulator">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Live Interactive Playground</span>
+          <h2 class="section-title">Experience Code Inspector in Real-Time</h2>
+          <p class="section-desc">
+            Test the live extension workflow directly in your browser. Select a language preset, run a streamed AI review, and click <strong>Apply Fix</strong> or <strong>Apply Refactor</strong> to observe how code mutations update in real time.
+          </p>
+        </div>
+
+        <!-- Simulator Frame -->
+        <div class="simulator-wrapper" id="simulatorWrapper">
+          <!-- Studio Toolbar -->
+          <div class="studio-toolbar">
+            <div class="studio-presets" id="presetButtonsGroup">
+              <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-right: 0.25rem;">Scenarios:</span>
+              <button class="preset-btn active" data-preset="ecommerce" id="presetEcommerce">TypeScript: Discount</button>
+              <button class="preset-btn" data-preset="asyncHandler" id="presetAsync">Node.js: Database ACID</button>
+              <button class="preset-btn" data-preset="reactHook" id="presetReact">React: Stale Closure</button>
+              <button class="preset-btn" data-preset="pythonData" id="presetPython">Python: Mutable Default</button>
+            </div>
+
+            <div class="studio-actions">
+              <button class="btn btn-primary btn-sm btn-glow" id="inspectBtn">
+                ⚡ Inspect Code <kbd class="shortcut-pill" style="margin-left: 0.35rem; padding: 0.1rem 0.35rem; font-size: 0.7rem;">Ctrl+Shift+K</kbd>
+              </button>
+              <button class="btn btn-secondary btn-sm" id="cacheHitBtn" title="Simulate instant sub-50ms Redis SHA-256 cache hit">
+                ⚡ Redis Cache Hit
+              </button>
+              <button class="btn btn-ghost btn-sm" id="resetBtn" title="Reset scenario code">
+                ↺ Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Dual Pane Layout -->
+          <div class="studio-grid">
+            <!-- Left Pane: VS Code Mock Editor -->
+            <div class="editor-pane" id="editorPane">
+              <div class="pane-header">
+                <div class="file-tab">
+                  <span class="file-dot"></span>
+                  <span id="fileTabTitle">calculateDiscount.ts</span>
+                </div>
+                <div style="color: var(--text-muted); font-size: 0.75rem;">
+                  <span>UTF-8</span> • <span style="color: var(--accent-cyan);">Active Editor</span>
+                </div>
+              </div>
+
+              <div class="editor-window">
+                <div class="line-numbers" id="lineNumbers"></div>
+                <pre class="code-area" id="codeArea" spellcheck="false"></pre>
+              </div>
+            </div>
+
+            <!-- Right Pane: Code Inspector Webview Panel -->
+            <div class="webview-pane" id="webviewPane">
+              <div class="webview-header">
+                <div class="webview-title">
+                  <img src="favicon.svg" alt="Inspector" style="width: 20px; height: 20px;">
+                  <span>Code Inspector</span>
+                  <span style="color: var(--text-muted); font-size: 0.75rem;" id="webviewTarget">calculateDiscount.ts (selection)</span>
+                </div>
+                <span class="status-badge ready" id="statusBadge">Ready</span>
+              </div>
+
+              <div class="webview-content" id="webviewContent">
+                <!-- Initial Empty State -->
+                <div class="inspector-empty" id="inspectorEmpty">
+                  <div class="empty-icon">🔍</div>
+                  <h3 style="font-size: 1.15rem; color: var(--text-primary);">Ready for Review</h3>
+                  <p style="font-size: 0.85rem; max-width: 300px; color: var(--text-secondary);">
+                    Highlight any function or selection in the editor and click <strong>Inspect Code</strong> or press <kbd class="shortcut-pill">Ctrl+Shift+K</kbd>.
+                  </p>
+                </div>
+
+                <!-- Live Stream Token Terminal -->
+                <div class="stream-section" id="streamSection" style="display: none;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-cyan);">● STREAMING CLAUDE TOKENS (SSE)</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">model: claude-3-5-sonnet</span>
+                  </div>
+                  <pre class="stream-box" id="streamTerminal"></pre>
+                </div>
+
+                <!-- Structured Results View -->
+                <div class="webview-results" id="webviewResults" style="display: none; flex-direction: column; gap: 1.25rem;">
+                  <!-- Mini Metrics Ribbon -->
+                  <div class="webview-metrics">
+                    <div class="mini-stat">
+                      <span class="mini-stat-val red" id="statBugs">0</span>
+                      <span class="mini-stat-lbl">Bug Risks</span>
+                    </div>
+                    <div class="mini-stat">
+                      <span class="mini-stat-val amber" id="statComplexity">0</span>
+                      <span class="mini-stat-lbl">Complexity</span>
+                    </div>
+                    <div class="mini-stat">
+                      <span class="mini-stat-val green" id="statNaming">0</span>
+                      <span class="mini-stat-lbl">Naming</span>
+                    </div>
+                    <div class="mini-stat">
+                      <span class="mini-stat-val cyan" id="statRefactors">0</span>
+                      <span class="mini-stat-lbl">Refactors</span>
+                    </div>
+                  </div>
+
+                  <!-- Bug Risks Section -->
+                  <div id="bugsSectionWrapper">
+                    <h4 style="font-size: 0.825rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-high); margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.35rem;">
+                      🚨 Detected Bug Risks
+                    </h4>
+                    <div id="bugsContainer" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+                  </div>
+
+                  <!-- Cognitive Complexity Section -->
+                  <div id="complexitySectionWrapper">
+                    <h4 style="font-size: 0.825rem; text-transform: uppercase; letter-spacing: 0.05em; color: #a78bfa; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.35rem;">
+                      ⚡ Cognitive Complexity Hotspots
+                    </h4>
+                    <div id="complexityContainer"></div>
+                  </div>
+
+                  <!-- Naming Refinements Section -->
+                  <div id="namingSectionWrapper">
+                    <h4 style="font-size: 0.825rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-medium); margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.35rem;">
+                      🏷️ Idiomatic Naming Refinements
+                    </h4>
+                    <div id="namingContainer" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+                  </div>
+
+                  <!-- Declarative Refactoring Section -->
+                  <div id="refactorsSectionWrapper">
+                    <h4 style="font-size: 0.825rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-cyan); margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.35rem;">
+                      ✨ Declarative One-Click Refactoring
+                    </h4>
+                    <div id="refactorsContainer" style="display: flex; flex-direction: column; gap: 0.75rem;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture & Performance Pipeline Section -->
+    <section class="architecture-section" id="architecture">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">System Engineering</span>
+          <h2 class="section-title">End-to-End Execution Pipeline</h2>
+          <p class="section-desc">
+            Designed for minimal developer friction, zero UI blocking, and cryptographic result caching. Click through the pipeline stages to inspect the underlying mechanics.
+          </p>
+        </div>
+
+        <!-- Interactive Pipeline Diagram -->
+        <div class="pipeline-diagram" id="pipelineDiagram">
+          <div class="pipe-step active" data-step="0" id="step0">
+            <div class="pipe-step-num">1</div>
+            <h3 class="pipe-step-title">VS Code Client</h3>
+            <p class="pipe-step-desc">Selection capture &amp; webview orchestration</p>
+          </div>
+          <span class="pipe-arrow">➔</span>
+
+          <div class="pipe-step" data-step="1" id="step1">
+            <div class="pipe-step-num">2</div>
+            <h3 class="pipe-step-title">Express Backend</h3>
+            <p class="pipe-step-desc">Token authentication &amp; SSE transport</p>
+          </div>
+          <span class="pipe-arrow">➔</span>
+
+          <div class="pipe-step" data-step="2" id="step2">
+            <div class="pipe-step-num">3</div>
+            <h3 class="pipe-step-title">Redis 7 Cache</h3>
+            <p class="pipe-step-desc">SHA-256 hash lookup (sub-50ms hit)</p>
+          </div>
+          <span class="pipe-arrow">➔</span>
+
+          <div class="pipe-step" data-step="3" id="step3">
+            <div class="pipe-step-num">4</div>
+            <h3 class="pipe-step-title">Claude 3.5 Sonnet</h3>
+            <p class="pipe-step-desc">Streaming token generation</p>
+          </div>
+          <span class="pipe-arrow">➔</span>
+
+          <div class="pipe-step" data-step="4" id="step4">
+            <div class="pipe-step-num">5</div>
+            <h3 class="pipe-step-title">WorkspaceEdit</h3>
+            <p class="pipe-step-desc">Native atomic document updates</p>
+          </div>
+        </div>
+
+        <!-- Step Detail Box -->
+        <div class="pipe-detail-box" id="pipeDetailBox">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+              <h3 id="pipeDetailTitle" style="font-size: 1.35rem; color: var(--text-primary);">VS Code Client Trigger</h3>
+              <span id="pipeDetailBadge" class="brand-badge">Editor Extension</span>
+            </div>
+            <p id="pipeDetailDesc" style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.6;">
+              The developer selects a code block and triggers Ctrl+Shift+K or right-clicks "Code Inspector: Review this function".
+            </p>
+            <div id="pipeDetailSpecs" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem;"></div>
+          </div>
+
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <span>Implementation Reference</span>
+            </div>
+            <pre class="code-block-content" id="pipeDetailCode" style="max-height: 220px;"></pre>
+          </div>
+        </div>
+
+        <!-- Latency Comparison Benchmark Bar -->
+        <div class="cache-benchmark-box">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span>⚡</span> SHA-256 Redis Cache Acceleration Impact
+          </h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Identical code blocks hash to identical SHA-256 keys. Subsequent audits bypass LLM inference entirely, slashing costs and dropping latency from ~1.2s to 32ms.
+          </p>
+
+          <div class="benchmark-row">
+            <div class="benchmark-label">Cache Miss (Claude 3.5)</div>
+            <div class="benchmark-bar-track">
+              <div class="benchmark-bar-fill claude">~1,240 ms (Full LLM Stream)</div>
+            </div>
+          </div>
+
+          <div class="benchmark-row" style="margin-bottom: 0;">
+            <div class="benchmark-label">Cache Hit (Redis 7)</div>
+            <div class="benchmark-bar-track">
+              <div class="benchmark-bar-fill redis">32 ms (In-Memory Hit)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual Extension Showcase & Real Screenshot Section -->
+    <section class="showcase-screenshot-section" id="showcase">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Visual Studio Marketplace Showcase</span>
+          <h2 class="section-title">Seamless VS Code Integration</h2>
+          <p class="section-desc">
+            Designed to feel 100% native. Code Inspector adopts your active VS Code theme tokens (fonts, background colors, status badges, buttons) for zero cognitive friction.
+          </p>
+        </div>
+
+        <div class="screenshot-frame">
+          <img src="assets/screenshot.png" alt="Code Inspector Extension in Visual Studio Code showing inline review panel" loading="lazy">
+        </div>
+      </div>
+    </section>
+
+    <!-- Command & Keybinding Matrix Reference -->
+    <section class="commands-section" id="commands">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Command Palette &amp; Keybindings</span>
+          <h2 class="section-title">Command Reference</h2>
+          <p class="section-desc">
+            Instantly invoke Code Inspector using registered VS Code command identifiers or ergonomic keyboard shortcuts.
+          </p>
+        </div>
+
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Command Name</th>
+                <th>Identifier</th>
+                <th>Default Shortcut</th>
+                <th>Context / Scope</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Review Selection</strong></td>
+                <td><code class="cmd-id">codeInspector.reviewSelection</code></td>
+                <td><kbd class="shortcut-pill">Ctrl+Shift+K</kbd> / <kbd class="shortcut-pill">Cmd+Shift+K</kbd></td>
+                <td>Editor Selection &amp; Context Menu</td>
+                <td>Audits highlighted lines or active function with streamed triage</td>
+              </tr>
+              <tr>
+                <td><strong>Review File</strong></td>
+                <td><code class="cmd-id">codeInspector.reviewFile</code></td>
+                <td>Command Palette</td>
+                <td>Active Editor Document</td>
+                <td>Performs comprehensive full-file audit from top to bottom</td>
+              </tr>
+              <tr>
+                <td><strong>Refactor Selection</strong></td>
+                <td><code class="cmd-id">codeInspector.refactor</code></td>
+                <td>Command Palette</td>
+                <td>Active Editor Selection</td>
+                <td>Generates declarative refactor proposal and displays diff</td>
+              </tr>
+              <tr>
+                <td><strong>Clear Cache</strong></td>
+                <td><code class="cmd-id">codeInspector.clearCache</code></td>
+                <td>Command Palette</td>
+                <td>Global</td>
+                <td>Flushes backend Redis cache and local state</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quickstart & Backend Deployment Section -->
+    <section class="quickstart-section" id="quickstart">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Deployment &amp; Configuration</span>
+          <h2 class="section-title">Quickstart Setup</h2>
+          <p class="section-desc">
+            Get your backend running in 60 seconds with Docker Compose or Node.js local development mode.
+          </p>
+        </div>
+
+        <div class="tab-nav">
+          <button class="tab-btn active" data-tab="tabDocker" id="tabDockerBtn">🐳 Docker Compose</button>
+          <button class="tab-btn" data-tab="tabLocal" id="tabLocalBtn">💻 Local Node.js Dev</button>
+          <button class="tab-btn" data-tab="tabSettings" id="tabSettingsBtn">⚙️ VS Code Settings</button>
+        </div>
+
+        <!-- Tab 1: Docker Compose -->
+        <div class="tab-pane active" id="tabDocker">
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <span>docker-compose.yml</span>
+              <button class="copy-btn" data-copy-target="dockerCode">Copy Command</button>
+            </div>
+            <pre class="code-block-content" id="dockerCode"># 1. Clone repository
+git clone https://github.com/crnjihia/code-inspector.git
+cd code-inspector
+
+# 2. Configure .env with your Anthropic key
+cat <<EOF > .env
+PORT=3000
+ANTHROPIC_API_KEY=sk-ant-api03-your-actual-key
+CODE_INSPECTOR_API_KEY=your-bearer-token
+REDIS_URL=redis://redis:6379
+EOF
+
+# 3. Spin up Backend + Redis 7
+docker-compose up -d
+
+# 4. Verify API health
+curl http://localhost:3000/health</pre>
+          </div>
+        </div>
+
+        <!-- Tab 2: Local Dev -->
+        <div class="tab-pane" id="tabLocal">
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <span>Terminal / Bash</span>
+              <button class="copy-btn" data-copy-target="localCode">Copy Command</button>
+            </div>
+            <pre class="code-block-content" id="localCode"># 1. Install dependencies across workspaces
+npm install
+
+# 2. Build TypeScript workspaces
+npm run build
+
+# 3. Start backend in local dev mode (auto in-memory cache fallback)
+npm run start --workspace=backend
+
+# 4. Run automated test suites
+npm run test</pre>
+          </div>
+        </div>
+
+        <!-- Tab 3: VS Code Settings -->
+        <div class="tab-pane" id="tabSettings">
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <span>settings.json</span>
+              <button class="copy-btn" data-copy-target="settingsCode">Copy JSON</button>
+            </div>
+            <pre class="code-block-content" id="settingsCode">{
+  "codeInspector.apiUrl": "http://localhost:3000",
+  "codeInspector.apiKey": "your-bearer-token"
+}</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://github.com/crnjihia/code-inspector" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub Repository</a>
+        <span>•</span>
+        <a href="https://marketplace.visualstudio.com/items?itemName=crnjihia.code-inspector" target="_blank" rel="noopener noreferrer" class="footer-link">VS Code Marketplace</a>
+        <span>•</span>
+        <a href="https://github.com/crnjihia/code-inspector/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="footer-link">MIT License</a>
+        <span>•</span>
+        <a href="#hero" class="footer-link">Back to Top ↑</a>
+      </div>
+      <p class="footer-copy">
+        <strong>Code Inspector</strong> — Built with TypeScript, Claude 3.5 Sonnet, Express &amp; Redis.<br>
+        Developed by <a href="https://github.com/crnjihia" target="_blank" rel="noopener noreferrer">@crnjihia</a>. Released under the MIT License.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Notification -->
+  <div class="toast-notice" id="toastNotice">
+    <span style="font-size: 1.15rem;">⚡</span>
+    <span id="toastText">Action completed!</span>
+  </div>
+
+  <!-- JavaScript Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

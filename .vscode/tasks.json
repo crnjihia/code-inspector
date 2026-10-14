@@ -2,20 +2,16 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "type": "npm",
-      "script": "build",
-      "path": "extension",
-      "problemMatcher": "$esbuild",
       "label": "npm: build-extension",
-      "detail": "node esbuild.js"
+      "type": "shell",
+      "command": "npm run build --workspace=extension",
+      "problemMatcher": "$esbuild"
     },
     {
-      "type": "npm",
-      "script": "build",
-      "path": "backend",
-      "problemMatcher": "$tsc",
       "label": "npm: build-backend",
-      "detail": "tsc"
+      "type": "shell",
+      "command": "npm run build --workspace=backend",
+      "problemMatcher": "$tsc"
     }
   ]
 }

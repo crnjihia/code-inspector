@@ -3,7 +3,7 @@
   "displayName": "Code Inspector",
   "description": "Intelligent inline code review & refactor for VS Code",
   "version": "0.1.0",
-  "publisher": "your-publisher-id",
+  "publisher": "crnjihia",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -95,7 +95,7 @@
   "icon": "media/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/code-inspector.git"
+    "url": "https://github.com/crnjihia/code-inspector.git"
   },
   "license": "MIT",
   "scripts": {

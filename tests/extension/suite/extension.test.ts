@@ -7,7 +7,7 @@ export async function runAll(): Promise<void> {
 }
 
 export function testExtensionActivation() {
-  const extension = vscode.extensions.getExtension('your-publisher-id.code-inspector') ||
+  const extension = vscode.extensions.getExtension('crnjihia.code-inspector') ||
                     vscode.extensions.all.find(ext => ext.id.includes('code-inspector'));
   assert.ok(extension !== undefined, 'Code Inspector extension should be found');
 }

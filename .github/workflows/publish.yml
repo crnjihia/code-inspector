@@ -1,0 +1,38 @@
+name: Publish Extension to Marketplace
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Monorepo Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test
+
+      - name: Build Extension
+        run: npm run build --workspace=extension
+
+      - name: Package VSIX
+        run: |
+          cd extension
+          npx @vscode/vsce package --no-git-tag-version -o code-inspector-${{ github.ref_name }}.vsix
+
+      - name: Publish to VS Code Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          cd extension
+          npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }}

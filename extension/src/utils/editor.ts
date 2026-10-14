@@ -3,11 +3,9 @@ import * as vscode from 'vscode';
 export function getApiUrl(): string {
   const codeConfig = vscode.workspace.getConfiguration('code');
   const inspectorConfig = vscode.workspace.getConfiguration('codeInspector');
-  const legacyConfig = vscode.workspace.getConfiguration('kagua');
   return (
     codeConfig.get<string>('apiUrl') ||
     inspectorConfig.get<string>('apiUrl') ||
-    legacyConfig.get<string>('apiUrl') ||
     'http://localhost:3000'
   );
 }
@@ -15,11 +13,9 @@ export function getApiUrl(): string {
 export function getApiKey(): string {
   const codeConfig = vscode.workspace.getConfiguration('code');
   const inspectorConfig = vscode.workspace.getConfiguration('codeInspector');
-  const legacyConfig = vscode.workspace.getConfiguration('kagua');
   return (
     codeConfig.get<string>('apiKey') ||
     inspectorConfig.get<string>('apiKey') ||
-    legacyConfig.get<string>('apiKey') ||
     ''
   );
 }

@@ -30,24 +30,6 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
-  // Backward compatibility aliases
-  context.subscriptions.push(
-    vscode.commands.registerCommand('kagua.review', async () => {
-      await registerReviewSelection(context);
-    }),
-    vscode.commands.registerCommand('kagua.reviewSelection', async () => {
-      await registerReviewSelection(context);
-    }),
-    vscode.commands.registerCommand('kagua.reviewFile', async () => {
-      await registerReviewFile(context);
-    }),
-    vscode.commands.registerCommand('kagua.refactor', async () => {
-      await registerRefactor(context);
-    }),
-    vscode.commands.registerCommand('kagua.clearCache', async () => {
-      await registerClearCache(context);
-    })
-  );
 }
 
 export function deactivate() {}

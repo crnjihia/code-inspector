@@ -8,7 +8,7 @@ export async function runAll(): Promise<void> {
 
 export function testExtensionActivation() {
   const extension = vscode.extensions.getExtension('your-publisher-id.code-inspector') ||
-                    vscode.extensions.all.find(ext => ext.id.includes('code-inspector') || ext.id.includes('kagua-dev-tool'));
+                    vscode.extensions.all.find(ext => ext.id.includes('code-inspector'));
   assert.ok(extension !== undefined, 'Code Inspector extension should be found');
 }
 
@@ -18,12 +18,7 @@ export async function testRegisteredCommands() {
     'codeInspector.reviewSelection',
     'codeInspector.reviewFile',
     'codeInspector.refactor',
-    'codeInspector.clearCache',
-    'kagua.review',
-    'kagua.reviewSelection',
-    'kagua.reviewFile',
-    'kagua.refactor',
-    'kagua.clearCache'
+    'codeInspector.clearCache'
   ];
 
   for (const cmd of inspectorCommands) {

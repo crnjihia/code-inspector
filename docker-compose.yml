@@ -13,7 +13,7 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - CODE_INSPECTOR_API_KEY=${CODE_INSPECTOR_API_KEY:-${KAGUA_API_KEY}}
+      - CODE_INSPECTOR_API_KEY=${CODE_INSPECTOR_API_KEY}
     depends_on:
       - redis
 volumes:

@@ -13,11 +13,6 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:kagua.review",
-    "onCommand:kagua.reviewSelection",
-    "onCommand:kagua.reviewFile",
-    "onCommand:kagua.refactor",
-    "onCommand:kagua.clearCache",
     "onCommand:codeInspector.reviewSelection",
     "onCommand:codeInspector.reviewFile",
     "onCommand:codeInspector.refactor",
@@ -27,26 +22,6 @@
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
-      {
-        "command": "kagua.reviewSelection",
-        "title": "Kagua: Review Selection",
-        "category": "Code Inspector"
-      },
-      {
-        "command": "kagua.reviewFile",
-        "title": "Kagua: Review File",
-        "category": "Code Inspector"
-      },
-      {
-        "command": "kagua.refactor",
-        "title": "Kagua: Refactor",
-        "category": "Code Inspector"
-      },
-      {
-        "command": "kagua.clearCache",
-        "title": "Kagua: Clear Review Cache",
-        "category": "Code Inspector"
-      },
       {
         "command": "codeInspector.reviewSelection",
         "title": "Code Inspector: Review Selection",
@@ -71,12 +46,6 @@
     "menus": {
       "editor/context": [
         {
-          "command": "kagua.reviewSelection",
-          "title": "Kagua: Review this function",
-          "group": "2_code_inspector",
-          "when": "editorHasSelection"
-        },
-        {
           "command": "codeInspector.reviewSelection",
           "title": "Code Inspector: Review this function",
           "group": "2_code_inspector",
@@ -85,12 +54,6 @@
       ]
     },
     "keybindings": [
-      {
-        "command": "kagua.reviewSelection",
-        "key": "ctrl+shift+k",
-        "mac": "cmd+shift+k",
-        "when": "editorTextFocus"
-      },
       {
         "command": "codeInspector.reviewSelection",
         "key": "ctrl+shift+k",

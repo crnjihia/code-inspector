@@ -50,8 +50,6 @@ Configure Code Inspector in **Settings** (`Ctrl+,` or `Cmd+,`) under **Extension
 | `codeInspector.apiUrl` | `string` | `http://localhost:3000` | URL of the Code Inspector Express backend service |
 | `codeInspector.apiKey` | `string` | `""` | Bearer token for authenticating extension requests with the backend |
 
-*(Backwards compatibility: Legacy `kagua.apiUrl` and `kagua.apiKey` are supported as fallback settings.)*
-
 ---
 
 ## 🚀 Backend Deployment Guide

@@ -5,7 +5,7 @@ import { authMiddleware } from '../../backend/src/middleware/auth';
 import { rateLimitMiddleware } from '../../backend/src/middleware/rateLimit';
 
 describe('Auth & Rate Limiting Middleware', () => {
-  const originalKey = process.env.CODE_INSPECTOR_API_KEY || process.env.KAGUA_API_KEY;
+  const originalKey = process.env.CODE_INSPECTOR_API_KEY;
 
   beforeEach(() => {
     process.env.CODE_INSPECTOR_API_KEY = 'secret-test-token';

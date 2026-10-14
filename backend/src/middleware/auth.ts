@@ -6,7 +6,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
     return next();
   }
 
-  const configuredKey = process.env.CODE_INSPECTOR_API_KEY || process.env.KAGUA_API_KEY;
+  const configuredKey = process.env.CODE_INSPECTOR_API_KEY;
 
   // If no API key configured on server, allow dev mode
   if (!configuredKey) {

@@ -1,0 +1,15 @@
+{
+  "name": "code-inspector-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Code Inspector — Intelligent inline code review & refactor for VS Code",
+  "workspaces": [
+    "extension",
+    "backend"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=extension && npm run build --workspace=backend",
+    "test": "npm run test --workspace=backend && npm run test --workspace=extension",
+    "lint": "npm run lint --workspace=extension"
+  }
+}

@@ -1,0 +1,14 @@
+../**
+.git/**
+.github/**
+.vscode/**
+backend/**
+tests/**
+src/**
+**/*.ts
+**/*.map
+node_modules/**
+.eslintrc*
+tsconfig*
+vitest*
+esbuild.js

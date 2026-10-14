@@ -1,0 +1,11 @@
+node_modules/
+dist/
+dist-test/
+out/
+*.vsix
+package-lock.json
+.env
+.vscode-test/
+kagua-dev-tool.md
+.DS_Store
+Thumbs.db

@@ -1,0 +1,157 @@
+{
+  "name": "code-inspector",
+  "displayName": "Code Inspector",
+  "description": "Intelligent inline code review & refactor for VS Code",
+  "version": "0.1.0",
+  "publisher": "your-publisher-id",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:kagua.review",
+    "onCommand:kagua.reviewSelection",
+    "onCommand:kagua.reviewFile",
+    "onCommand:kagua.refactor",
+    "onCommand:kagua.clearCache",
+    "onCommand:codeInspector.reviewSelection",
+    "onCommand:codeInspector.reviewFile",
+    "onCommand:codeInspector.refactor",
+    "onCommand:codeInspector.clearCache",
+    "onLanguage:*"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "kagua.reviewSelection",
+        "title": "Kagua: Review Selection",
+        "category": "Code Inspector"
+      },
+      {
+        "command": "kagua.reviewFile",
+        "title": "Kagua: Review File",
+        "category": "Code Inspector"
+      },
+      {
+        "command": "kagua.refactor",
+        "title": "Kagua: Refactor",
+        "category": "Code Inspector"
+      },
+      {
+        "command": "kagua.clearCache",
+        "title": "Kagua: Clear Review Cache",
+        "category": "Code Inspector"
+      },
+      {
+        "command": "codeInspector.reviewSelection",
+        "title": "Code Inspector: Review Selection",
+        "category": "Code Inspector"
+      },
+      {
+        "command": "codeInspector.reviewFile",
+        "title": "Code Inspector: Review File",
+        "category": "Code Inspector"
+      },
+      {
+        "command": "codeInspector.refactor",
+        "title": "Code Inspector: Refactor",
+        "category": "Code Inspector"
+      },
+      {
+        "command": "codeInspector.clearCache",
+        "title": "Code Inspector: Clear Review Cache",
+        "category": "Code Inspector"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "kagua.reviewSelection",
+          "title": "Kagua: Review this function",
+          "group": "2_code_inspector",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "codeInspector.reviewSelection",
+          "title": "Code Inspector: Review this function",
+          "group": "2_code_inspector",
+          "when": "editorHasSelection"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "kagua.reviewSelection",
+        "key": "ctrl+shift+k",
+        "mac": "cmd+shift+k",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "codeInspector.reviewSelection",
+        "key": "ctrl+shift+k",
+        "mac": "cmd+shift+k",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Code Inspector Configuration",
+      "properties": {
+        "code.apiUrl": {
+          "type": "string",
+          "default": "http://localhost:3000",
+          "description": "Backend API endpoint for Code Inspector service",
+          "scope": "window"
+        },
+        "code.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Bearer token for backend authentication",
+          "scope": "application"
+        },
+        "codeInspector.apiUrl": {
+          "type": "string",
+          "default": "http://localhost:3000",
+          "description": "Backend API endpoint for Code Inspector service",
+          "scope": "window"
+        },
+        "codeInspector.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Bearer token for backend authentication",
+          "scope": "application"
+        }
+      }
+    }
+  },
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/code-inspector.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "lint": "eslint src --ext ts",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
+    "@vscode/test-electron": "^2.4.0",
+    "esbuild": "^0.20.1",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3",
+    "vitest": "^1.3.1"
+  }
+}

@@ -1,83 +1,112 @@
-# Code Inspector
+# Code Inspector 🔍⚡
 
-[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/your-publisher-id.code-inspector?style=for-the-badge&logo=visual-studio-code&label=Marketplace)](https://marketplace.visualstudio.com/items?itemName=your-publisher-id.code-inspector)
-[![CI Build & Test](https://img.shields.io/github/actions/workflow/status/your-org/code-inspector/ci.yml?style=for-the-badge&label=Build%20%26%20Test)](https://github.com/your-org/code-inspector/actions)
+[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/crnjihia.code-inspector?style=for-the-badge&logo=visual-studio-code&label=Marketplace)](https://marketplace.visualstudio.com/items?itemName=crnjihia.code-inspector)
+[![CI Build & Test](https://img.shields.io/github/actions/workflow/status/crnjihia/code-inspector/ci.yml?style=for-the-badge&label=Build%20%26%20Test)](https://github.com/crnjihia/code-inspector/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Node.js 20+](https://img.shields.io/badge/Node.js-20+-339933.svg?style=for-the-badge&logo=node.js)](https://nodejs.org)
+[![Claude Powered](https://img.shields.io/badge/Anthropic-Claude--3.5--Sonnet-d97706.svg?style=for-the-badge)](https://anthropic.com)
 
-**Code Inspector** brings intelligent, streamed inline code review and one-click refactoring directly into VS Code. Powered by Claude (Anthropic API) and backed by a blazing-fast Node.js caching tier with Redis, Code Inspector identifies bug risks, pinpoints complexity hot spots, suggests idiomatic naming, and delivers one-click refactors via native `WorkspaceEdit` diffs.
-
----
-
-## 🎬 Demo
-
-![Code Inspector Review & Refactor Workflow](https://raw.githubusercontent.com/your-org/code-inspector/main/media/demo.gif)
-*(Placeholder: Highlight any function, trigger `Ctrl+Shift+K`, watch suggestions stream in real-time, and click "Apply" to edit code instantly.)*
+**Code Inspector** brings intelligent, streamed inline code review and one-click refactoring directly into Visual Studio Code. Powered by Claude 3.5 Sonnet and backed by a low-latency Node.js caching tier with Redis, Code Inspector detects critical bug risks, pinpoints complexity hot spots, suggests clean naming improvements, and applies refactors with native `WorkspaceEdit` diffs.
 
 ---
 
-## ✨ Features
+## 📸 Overview & Live Preview
 
-- **⚡ Live Streaming Review**: Suggestions stream directly into a side webview panel (`ViewColumn.Beside`) as tokens arrive from Claude.
-- **🚨 Bug Risk Identification**: Automatic severity categorization (`HIGH`, `MEDIUM`, `LOW`) with concrete line references and proposed fix code.
-- **⚡ Complexity Scoring**: Real-time complexity evaluation highlighting nested branches, cognitive load, and edge-case fragility.
-- **🏷️ Naming Improvements**: Inline rename suggestions comparing current identifiers to clean, idiomatic alternatives with semantic rationale.
-- **🛠️ One-Click Refactor**: One-click application of suggestions using VS Code's `WorkspaceEdit` API, opening comparison diffs so you stay in total control.
-- **🗄️ SHA-256 Redis Caching**: Every review payload is hashed (`sha256(code + language + mode)`) and cached for 24 hours to eliminate redundant LLM invocations and latency.
-- **🎨 Native VS Code Theme Integration**: Fluid UI matching your editor theme using native CSS variables (`--vscode-editor-background`, `--vscode-button-background`, etc.).
+![Code Inspector Inline Review & Webview Panel](media/screenshot.png)
+
+*Highlight any function or file block, press `Ctrl+Shift+K`, and review streamed suggestions with instantaneous one-click fixes.*
 
 ---
 
-## ⌨️ Commands
+## 🚀 Key Features
 
-| Command | Command Identifier | Default Shortcut | Where Available | Description |
+- **⚡ Real-Time Streaming Review**: Suggestions stream directly into an integrated side panel (`ViewColumn.Beside`) as tokens arrive from Claude via Server-Sent Events (SSE).
+- **🚨 Intelligent Bug Risk Detection**: Automatic categorization into `HIGH`, `MEDIUM`, and `LOW` severity with exact line references, clear descriptions, and instant **Apply Fix** actions.
+- **⚡ Cognitive Complexity Scoring**: Quantitative complexity analysis highlighting deeply nested conditional branches and fragile edge cases.
+- **🏷️ Idiomatic Naming Refinements**: Identifies cryptic abbreviations or non-standard identifiers (`disc` → `discount`) with side-by-side diff previews and one-click **Apply Rename**.
+- **🛠️ One-Click Refactoring**: Transforms functions into clean, declarative implementations using native `vscode.WorkspaceEdit`, automatically presenting comparison diffs.
+- **🗄️ SHA-256 Redis Caching Layer**: Hashes inputs (`sha256(code + language + mode)`) and caches results for 24 hours to prevent redundant API calls and deliver sub-50ms repeat reviews.
+- **🛡️ Built-in Offline Dev Fallback**: Includes realistic development stream fallback when running offline or without an Anthropic API key.
+- **🎨 Native VS Code Theme Integration**: Fluid UI inheriting your editor's CSS variables (`--vscode-editor-background`, `--vscode-button-background`, etc.) for zero visual dissonance.
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph LR
+    subgraph VS Code Extension
+        Editor[Active Code Editor] -->|Ctrl+Shift+K| Client[Extension Client]
+        Client -->|SSE Stream| Panel[Webview Side Panel]
+        Panel -->|Apply Edits| WorkspaceEdit[WorkspaceEdit API]
+        WorkspaceEdit -->|Updates Code| Editor
+    end
+
+    subgraph Backend Service
+        Client -->|POST /review| API[Express Server]
+        API -->|Check Hash| Cache[(Redis 7 Cache)]
+        Cache -.->|Cache Hit| API
+        API -->|Cache Miss| Claude[Claude 3.5 Sonnet API]
+        Claude -->|Stream Tokens| API
+        API -->|Store 24h TTL| Cache
+    end
+```
+
+---
+
+## ⌨️ Command Reference
+
+| Command | Command Identifier | Default Shortcut | Context / Availability | Description |
 |---|---|---|---|---|
-| **Code Inspector: Review Selection** | `codeInspector.reviewSelection` | `Ctrl+Shift+K` (Win/Linux)<br>`Cmd+Shift+K` (Mac) | Editor Selection & Context Menu | Analyzes currently selected function or block |
-| **Code Inspector: Review File** | `codeInspector.reviewFile` | Palette | Active Editor | Performs a full-file architecture and bug audit |
-| **Code Inspector: Refactor** | `codeInspector.refactor` | Palette | Active Editor | Refactors highlighted code for maximum readability |
-| **Code Inspector: Clear Review Cache**| `codeInspector.clearCache` | Palette | Command Palette | Clears both local and backend Redis caches |
+| **Code Inspector: Review Selection** | `codeInspector.reviewSelection` | `Ctrl+Shift+K` (Win/Linux)<br>`Cmd+Shift+K` (macOS) | Active Editor Selection & Context Menu | Audits selected function or highlighted lines |
+| **Code Inspector: Review File** | `codeInspector.reviewFile` | Command Palette | Active Editor | Performs full-file audit from top to bottom |
+| **Code Inspector: Refactor** | `codeInspector.refactor` | Command Palette | Active Editor | Refactors highlighted function for readability |
+| **Code Inspector: Clear Review Cache**| `codeInspector.clearCache` | Command Palette | Global | Clears both backend Redis and local caches |
 
-### Context Menu Integration
-Right-click on any highlighted code to invoke **Code Inspector: Review this function** directly from the context menu.
+### Context Menu Quick Action
+Right-click on any selected block of code to invoke **"Code Inspector: Review this function"** directly from the editor context menu.
 
 ---
 
-## ⚙️ Configuration Settings
+## ⚙️ Configuration
 
-Configure Code Inspector in **Settings** (`Ctrl+,` or `Cmd+,`) under **Extensions → Code Inspector Configuration**:
+Configure settings in **VS Code Settings** (`Ctrl+,` or `Cmd+,`) under **Extensions → Code Inspector Configuration**:
 
 | Setting | Type | Default | Description |
 |---|---|---|---|
-| `codeInspector.apiUrl` | `string` | `http://localhost:3000` | URL of the Code Inspector Express backend service |
-| `codeInspector.apiKey` | `string` | `""` | Bearer token for authenticating extension requests with the backend |
+| `code.apiUrl` | `string` | `http://localhost:3000` | Backend API endpoint for Code Inspector service |
+| `code.apiKey` | `string` | `""` | Bearer token for authenticating extension requests |
+| `codeInspector.apiUrl` | `string` | `http://localhost:3000` | Alias for backend API endpoint |
+| `codeInspector.apiKey` | `string` | `""` | Alias for backend API key |
 
 ---
 
-## 🚀 Backend Deployment Guide
+## 🚀 Backend Quickstart
 
-The Code Inspector backend is built on Express, Node.js, and TypeScript, backed by Redis and the Anthropic Claude SDK.
+The Code Inspector backend is powered by Node.js, Express, TypeScript, Redis, and the Anthropic Claude SDK.
 
-### Prerequisites
-- Docker & Docker Compose **or** Node.js 20+ and Redis 7+
-- Anthropic Claude API Key (`ANTHROPIC_API_KEY`)
+### Option A: Docker Compose (Production Ready)
 
-### Option A: Running with Docker Compose (Recommended)
-
-1. Clone repository and create `.env`:
+1. Clone repository:
    ```bash
-   cp .env.example .env
+   git clone https://github.com/crnjihia/code-inspector.git
+   cd code-inspector
    ```
-2. Configure your environment variables:
+
+2. Configure environment variables in `.env`:
    ```env
-   ANTHROPIC_API_KEY=sk-ant-api03-...
-   CODE_INSPECTOR_API_KEY=your-secure-internal-bearer-token
-   REDIS_URL=redis://redis:6379
    PORT=3000
+   ANTHROPIC_API_KEY=sk-ant-api03-...
+   CODE_INSPECTOR_API_KEY=your-secure-bearer-token
+   REDIS_URL=redis://redis:6379
    ```
-3. Start Redis and backend:
+
+3. Start services:
    ```bash
    docker-compose up -d
    ```
-4. Verify health status:
+
+4. Verify health:
    ```bash
    curl http://localhost:3000/health
    # Returns: {"status":"ok","service":"code-inspector-backend",...}
@@ -89,67 +118,41 @@ The Code Inspector backend is built on Express, Node.js, and TypeScript, backed 
 # 1. Install dependencies
 npm install
 
-# 2. Start backend in development mode (with in-memory cache fallback)
+# 2. Build backend and extension
+npm run build
+
+# 3. Start backend in local dev mode (with automatic in-memory cache)
 npm run start --workspace=backend
-```
-
----
-
-## 🔒 Privacy & Security Notice
-
-- **Code Transmission**: Selected code snippets or files are sent exclusively to your configured Code Inspector backend (`codeInspector.apiUrl`) via TLS/HTTP.
-- **Claude Processing**: The backend forwards code to Anthropic's Claude API for inference. Data is processed in accordance with Anthropic's commercial API terms (not used for model training).
-- **Caching**: Review results are cached in Redis under a deterministic SHA-256 hash for 24 hours. No source code files are saved to persistent disk. Cache can be cleared on demand at any time with `Code Inspector: Clear Review Cache`.
-- **Authentication**: Requests between the extension and backend are secured with Bearer token authentication and per-instance rate limiting (30 requests/minute).
-
----
-
-## 🛠️ Monorepo Architecture
-
-```
-code-inspector/
-├── extension/                 # VS Code Extension Host
-│   ├── src/
-│   │   ├── extension.ts       # Activation & command wiring
-│   │   ├── commands/          # reviewSelection, reviewFile, refactor, clearCache
-│   │   ├── webview/           # ReviewPanel & HtmlBuilder
-│   │   ├── services/          # apiClient & local cache
-│   │   └── utils/             # editor helpers & sha256 hash
-│   ├── media/                 # styles.css, script.js, icon.png
-│   ├── esbuild.js             # High-speed bundling
-│   └── package.json           # Extension manifest & contributes
-├── backend/                   # Express + TypeScript Server
-│   ├── src/
-│   │   ├── index.ts           # Express server & routes
-│   │   ├── routes/            # /review & /refactor endpoints
-│   │   ├── services/          # Claude API streaming & Redis cache
-│   │   ├── middleware/        # Bearer auth & instance rate limiting
-│   │   └── utils/             # Parser & sha256 hasher
-│   ├── Dockerfile
-│   └── package.json
-├── tests/
-│   ├── extension/             # Vitest unit tests & @vscode/test-electron suite
-│   └── backend/               # Vitest route tests with mocked Claude
-├── docker-compose.yml         # Redis + Backend multi-container setup
-├── CHANGELOG.md
-├── LICENSE
-└── README.md
 ```
 
 ---
 
 ## 🧪 Testing
 
+Code Inspector includes automated test suites covering backend routes, rate limiting, token streaming, and extension command utilities:
+
 ```bash
-# Run all unit tests across both workspaces
-npm test
+# Run unit tests across all workspaces
+npm run test
 
 # Run linter
 npm run lint
+
+# Build extension VSIX package
+cd extension
+npx @vscode/vsce package --no-git-tag-version
 ```
+
+---
+
+## 🔒 Privacy & Security
+
+- **Direct Communication**: Code Inspector communicates solely with your configured backend URL (`code.apiUrl`). No third-party tracking or telemetry is included.
+- **Token Protection**: Backend routes are protected with Bearer token authentication and rate-limited to 30 requests per minute per extension instance ID.
+- **Cache Control**: All cached review JSON stored in Redis is indexed by SHA-256 hashes (`sha256(code + language + mode)`) and automatically expires after 24 hours. You can clear the cache on demand using `codeInspector.clearCache`.
 
 ---
 
 ## 📄 License
 
-MIT License © 2026 Code Inspector Team. See [LICENSE](LICENSE) for details.
+Distributed under the [MIT License](LICENSE). Copyright © 2026 Christopher Njihia.

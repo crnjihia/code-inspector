@@ -1,4 +1,4 @@
-# Code Inspector 🔍⚡
+# Code Inspector 🔍
 
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/crnjihia.code-inspector?style=for-the-badge&logo=visual-studio-code&label=Marketplace)](https://marketplace.visualstudio.com/items?itemName=crnjihia.code-inspector)
 [![CI Build & Test](https://img.shields.io/github/actions/workflow/status/crnjihia/code-inspector/ci.yml?style=for-the-badge&label=Build%20%26%20Test)](https://github.com/crnjihia/code-inspector/actions)
